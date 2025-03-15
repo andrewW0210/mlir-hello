@@ -57,12 +57,11 @@ int dumpLLVMIR(mlir::ModuleOp module) {
   // Initialize LLVM targets.
   llvm::InitializeNativeTarget();
   llvm::InitializeNativeTargetAsmPrinter();
-  auto tmBuilderOrError = llvm::orc::JITTargetMachineBuilder::detectHost();
-  if (!tmBuilderOrError) {
-    llvm::errs() << "Could not create JITTargetMachineBuilder\n";
-    return -1;
-  }
-  auto tmOrError = tmBuilderOrError->createTargetMachine();
+
+  llvm::orc::JITTargetMachineBuilder JJITMB(
+      llvm::Triple("riscv64-unknown-elf"));
+
+  auto tmOrError = JJITMB.createTargetMachine();
   if (!tmOrError) {
     llvm::errs() << "Could not create TargetMachine\n";
     return -1;
